@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 find_package(autodiff REQUIRED)
 
 add_subdirectory(computing)
+add_subdirectory(utils)
