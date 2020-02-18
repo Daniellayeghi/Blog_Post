@@ -6,7 +6,7 @@
 using namespace autodiff;
 
 template <typename T>
-inline static T sinus(T& x)
+static inline T sinus(T& x)
 {
     return sin(x);
 }
@@ -16,13 +16,13 @@ static inline var sinus(var& x)
     return sin(x);
 }
 
-static dual sinus(dual& x)
+static inline dual sinus(dual& x)
 {
     return sin(x);
 }
 
 template <typename T>
-inline static T first_order_finite_diff(T& around, T& step)
+static inline T first_order_finite_diff(T&& around, T&& step)
 {
     T perturbation_p = around + step; T perturbation_n = around - step;
     return (sinus(perturbation_p) - sinus(perturbation_n))/(2 * step);
@@ -31,17 +31,14 @@ inline static T first_order_finite_diff(T& around, T& step)
 template dual sinus<dual>(dual& x);
 template var sinus<var>(var& x);
 
-template dual first_order_finite_diff<dual>(dual& around, dual& step);
-template var first_order_finite_diff<var>(var& around, var& step);
+template double first_order_finite_diff<double>(double&& around, double&& step);
 
 int main()
 {
     TimeBench timer;
     dual input_d = 0.12; var input_v = 0.12;
-    dual perturb_d = 0.01; var perturb_v = 0.01;
-    dual s_d  = sinus(input_d);
     var s_v   = sinus(input_v);
-    dual dsdx_finite = first_order_finite_diff(input_d, perturb_d);
+    double dsdx_finite = first_order_finite_diff(0.12, 0.01);
     dual dsdx_autodiff_for = derivative(sinus<dual>, wrt(input_d), at(input_d));
     Derivatives dud = derivatives(s_v);
     var dsdx_autodiff_rev = dud(input_v);
